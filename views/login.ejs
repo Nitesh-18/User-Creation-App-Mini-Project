@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mini Project</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .animated-text {
+            animation: animate 2s infinite;
+        }
+
+        @keyframes animate {
+            0% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-r from-cyan-500 to-blue-500 h-screen">
+    <div class="min-h-screen flex flex-col items-center justify-center p-5">
+        <h2 class="text-3xl font-bold animated-text text-orange-500 mb-6">LOGIN ACCOUNT</h2>
+        <div class="w-full max-w-md bg-white rounded-lg shadow-md p-6">
+            <form action="/login" method="post" class="flex flex-col">
+                <input
+                    class="px-3 py-2 mb-4 outline-none bg-gray-200 border-2 border-gray-300 rounded-lg focus:border-blue-500"
+                    type="email" placeholder="Email" name="email">
+                <div class="relative mb-4">
+                    <input
+                        class="px-3 py-2 outline-none bg-gray-200 border-2 border-gray-300 rounded-lg focus:border-blue-500"
+                        type="password" placeholder="Password" name="password" id="password">
+                    <span class="absolute right-3 top-3 cursor-pointer" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="eye"></i>
+                    </span>
+                </div>
+
+                <input class="px-3 py-2 mt-4 bg-yellow-500 text-white rounded-lg hover:bg-blue-800 cursor-pointer"
+                    type="submit" value="Login Account">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            var passwordInput = document.getElementById("password");
+            var eyeIcon = document.getElementById("eye");
+
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                eyeIcon.className = "fas fa-eye-slash";
+            } else {
+                passwordInput.type = "password";
+                eyeIcon.className = "fas fa-eye";
+            }
+        }
+    </script>
+</body>
+
+</html>
