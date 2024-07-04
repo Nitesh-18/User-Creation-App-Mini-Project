@@ -23,6 +23,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan('combined'));
 
+app.use((req, res, next) => {
+  res.status(404).send('Sorry, page not found');
+});
+
 app.get("/", (req, res) => {
   res.render("index");
 });
@@ -103,11 +107,16 @@ app.post("/login", async (req, res) => {
 });
 
 function isLoggedIn(req, res, next) {
-  if (!req.cookies.token) res.redirect("/login");
-  else {
-    let data = jwt.verify(req.cookies.token, "shhh");
-    req.user = data;
-    next();
+  if (!req.cookies.token) {
+    res.redirect('/login');
+  } else {
+    try {
+      let data = jwt.verify(req.cookies.token, 'shhh');
+      req.user = data;
+      next();
+    } catch (err) {
+      res.redirect('/login');
+    }
   }
 }
 
