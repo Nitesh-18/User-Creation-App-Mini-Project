@@ -12,6 +12,7 @@ const { render } = require("ejs");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const user = require("./models/user");
+const morgan = require('morgan');
 
 app.set("view engine", "ejs");
 app.set('views', path.join(__dirname, 'views'));
@@ -20,6 +21,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(morgan('combined'));
 
 app.get("/", (req, res) => {
   res.render("index");
