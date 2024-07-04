@@ -1,55 +1,16 @@
 {
     "version": 2,
     "builds": [
-        {
-            "src": "app.js",
-            "use": "@vercel/node"
-        }
+      {
+        "src": "app.js",
+        "use": "@vercel/node"
+      }
     ],
     "routes": [
-        {
-            "src": "/(.*)",
-            "dest": "app.js"
-        },
-        {
-            "src": "/login",
-            "dest": "/login"
-        },
-        {
-            "src": "/profile",
-            "dest": "/profile"
-        },
-        {
-            "src": "/post",
-            "methods": [
-                "POST"
-            ],
-            "dest": "/post"
-        },
-        {
-            "src": "/like",
-            "methods": [
-                "POST"
-            ],
-            "dest": "/like"
-        },
-        {
-            "src": "/logout",
-            "dest": "/logout"
-        },
-        {
-            "src": "/register",
-            "methods": [
-                "POST"
-            ],
-            "dest": "/register"
-        },
-        {
-            "src": "/login",
-            "methods": [
-                "POST"
-            ],
-            "dest": "/login"
-        }
+      {
+        "src": "/(.*)",
+        "dest": "app.js"
+      }
     ]
-}
+  }
+  
