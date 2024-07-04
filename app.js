@@ -2,6 +2,7 @@ require("events").EventEmitter.prototype._maxListeners = 100;
 
 const express = require("express");
 const app = express();
+const path = require('path');
 
 const userModel = require("./models/user");
 const postModel = require("./models/post");
@@ -13,8 +14,10 @@ const jwt = require("jsonwebtoken");
 const user = require("./models/user");
 
 app.set("view engine", "ejs");
+app.set('views', path.join(__dirname, 'views'));
+
 app.use(express.json());
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
