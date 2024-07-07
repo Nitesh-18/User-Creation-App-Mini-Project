@@ -153,6 +153,14 @@
     <nav class="fixed top-0 right-0 p-4 z-10 ">
         <a href="/logout" class="bg-red-500 text-white rounded-md p-2">Logout</a>
     </nav>
+    <div>
+        <% if (message) { %>
+            <div
+                class="w-1/4 alert <%= message.type === 'success' ? 'bg-red-500' : 'bg-yellow-500' %> text-white rounded-md p-2 mb-2">
+                <%= message.text %>
+            </div>
+            <% } %>
+    </div>
     <div class="min-h-screen p-12 flex justify-center">
         <div class="flex w-full pt-5">
             <div class="w-1/2">
@@ -161,6 +169,7 @@
             </div>
             <div class="w-1/2">
                 <div class="form-container">
+
                     <form action="/post" method="POST">
                         <h3 class="text-lg font-bold mb-4">Create a new post</h3>
                         <div class="flex flex-col">
@@ -188,26 +197,27 @@
                         <%= post.title %>
                     </h5>
                     <p class="text-gray-600">
-                        <%= post.content.length > 20 ? post.content.substring(0, 20) : '' %>
-                        <% if (post.content.length > 20) { %>
-                            <span class="hidden-content">
-                                <%= post.content.substring(20) %>
-                            </span>
-                            <span class="read-more-link"
-                                data-content="<%= encodeURIComponent(post.content) %>"
-                                data-title="<%= encodeURIComponent(post.title) %>"
-                                onclick="readMore(this)">... Read More</span>
-                        <% } else { %>
-                            <%= post.content %>
-                        <% } %>
+                        <%= post.content.length> 20 ? post.content.substring(0, 20) : '' %>
+                            <% if (post.content.length> 20) { %>
+                                <span class="hidden-content">
+                                    <%= post.content.substring(20) %>
+                                </span>
+                                <span class="read-more-link" data-content="<%= encodeURIComponent(post.content) %>"
+                                    data-title="<%= encodeURIComponent(post.title) %>" onclick="readMore(this)">... Read
+                                    More</span>
+                                <% } else { %>
+                                    <%= post.content %>
+                                        <% } %>
                     </p>
                     <div class="flex justify-between">
-                        <a href="/like/<%= post._id %>" class="bg-blue-500 text-white rounded-md p-2">Like (<%= post.likes %>)</a>
+                        <a href="/like/<%= post._id %>" class="bg-blue-500 text-white rounded-md p-2">Like (<%=
+                                (post.likes || []).length %>)</a>
                         <a href="/edit/<%= post._id %>" class="bg-yellow-500 text-white rounded-md p-2">Edit</a>
                         <a href="/delete/<%= post._id %>" class="bg-red-500 text-white rounded-md p-2">Delete</a>
                     </div>
+
                 </div>
-            <% }); %>
+                <% }); %>
         </div>
     </div>
 

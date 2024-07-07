@@ -5,13 +5,14 @@ const app = express();
 const path = require("path");
 const bcryptjs = require("bcryptjs");
 
-const mongoose= require('mongoose');
 const userModel = require("./models/user");
 const postModel = require("./models/post");
 
 const cookieParser = require("cookie-parser");
 const jwt = require("jsonwebtoken");
 const morgan = require("morgan");
+const session = require("express-session");
+const mongoose = require('mongoose');  // Ensure mongoose is imported
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -21,6 +22,21 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(morgan("combined"));
+
+// Session middleware
+app.use(session({
+  secret: 'shhh', // replace with a secure secret
+  resave: false,
+  saveUninitialized: true,
+  cookie: { secure: false } // use true if using https
+}));
+
+// Flash message middleware
+app.use((req, res, next) => {
+  res.locals.message = req.session.message;
+  delete req.session.message;
+  next();
+});
 
 app.get("/", (req, res) => {
   res.render("index");
@@ -44,21 +60,40 @@ app.post("/post", isLoggedIn, async (req, res) => {
     userId: user._id,
     title,
     content,
+    likes: []
   });
   user.posts.push(post._id);
   await user.save({ validateBeforeSave: false });
   res.redirect("/profile");
 });
 
-app.get("/like/:postId", isLoggedIn, async (req, res) => {
-  const postId = req.params.postId;
-  const post = await postModel.findById(postId);
-  if (!post) return res.status(404).send("Post not found");
-  post.likes = (post.likes || 0) + 1;
-  await post.save();
-  res.redirect("/profile");
+// Like/Unlike Post Route
+app.post("/like", isLoggedIn, async (req, res) => {
+  const postId = req.body.postId;
+  // try {
+  //   const post = await postModel.findById(postId);
+  //   if (!post) return res.status(404).send("Post not found");
+
+  //   const userId = mongoose.Types.ObjectId(req.user.userId);
+  //   const likeIndex = post.likes.indexOf(userId);
+
+  //   if (likeIndex === -1) {
+  //     // User hasn't liked the post yet
+  //     post.likes.push(userId);
+  //   } else {
+  //     // User already liked the post, so we remove the like (unlike)
+  //     post.likes.splice(likeIndex, 1);
+  //   }
+
+  //   await post.save();
+  //   res.send(`Likes: ${post.likes.length}`);
+  // } catch (error) {
+  //   console.error("Error liking post:", error);
+  //   res.status(500).send("An error occurred while liking the post");
+  // }
 });
 
+// Delete Post Route
 app.get("/delete/:postId", isLoggedIn, async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -80,35 +115,14 @@ app.get("/delete/:postId", isLoggedIn, async (req, res) => {
     // Remove the post from the database
     await post.deleteOne();
 
+    // Set flash message
+    req.session.message = { type: 'success', text: 'Successfully deleted post' };
     res.redirect("/profile");
   } catch (error) {
     console.error("Error deleting post:", error); // Log the error for debugging
-    res.status(500).send("An error occurred while deleting the post");
+    req.session.message = { type: 'error', text: 'Error deleting post' };
+    res.status(500).redirect("/profile");
   }
-});
-
-app.get("/edit/:postId", isLoggedIn, async (req, res) => {
-  const postId = req.params.postId;
-  const post = await postModel.findById(postId);
-  if (!post) return res.status(404).send("Post not found");
-  if (!post.userId.equals(req.user.userId))
-    return res.status(403).send("Unauthorized action");
-
-  res.render("edit", { post });
-});
-
-app.post("/edit/:postId", isLoggedIn, async (req, res) => {
-  const postId = req.params.postId;
-  const { title, content } = req.body;
-  const post = await postModel.findById(postId);
-  if (!post) return res.status(404).send("Post not found");
-  if (!post.userId.equals(req.user.userId))
-    return res.status(403).send("Unauthorized action");
-
-  post.title = title;
-  post.content = content;
-  await post.save();
-  res.redirect("/profile");
 });
 
 app.get("/logout", (req, res) => {
@@ -171,7 +185,7 @@ app.use((req, res, next) => {
 });
 
 app.listen(3000, () => {
-  console.log("Server started on http://localhost:3000");
+  console.log("Server is running on port 3000");
 });
 
 module.exports = app;
